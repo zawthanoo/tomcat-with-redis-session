@@ -1,0 +1,16 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: |
+            export MULE_VERSION=$(cat MULE_VERSION.txt)
+            echo $MULE_VERSION-$(echo $CIRCLE_SHA1 | cut -c -7)-$CIRCLE_BUILD_NUM > BUILD_VERSION.txt
+            docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_REPO
+            docker build --no-cache  --build-arg MULE_VERSION=$MULE_VERSION -t $DOCKER_REPO/$DOCKER_REPO_ORG/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt) docker
+            docker push $DOCKER_REPO/$DOCKER_REPO_ORG/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt)
