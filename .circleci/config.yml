@@ -9,7 +9,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            echo $(echo $CIRCLE_SHA1 | cut -c -7)-$CIRCLE_BUILD_NUM > BUILD_VERSION.txt
+            export TOMCAT_VERSION=$(cat TOMCAT_VERSION.txt)
+            echo $TOMCAT_VERSION-$(echo $CIRCLE_SHA1 | cut -c -7)-$CIRCLE_BUILD_NUM > BUILD_VERSION.txt
             docker login -u $DOCKER_USER -p $DOCKER_PASS
-            docker build --no-cache -t $DOCKER_USER/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt) docker
+            docker build --no-cache --build-arg TOMCAT_VERSION=$TOMCAT_VERSION -t $DOCKER_USER/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt) docker
             docker push $DOCKER_USER/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt)            
