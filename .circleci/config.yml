@@ -11,6 +11,6 @@ jobs:
           command: |
             export TOMCAT_VERSION=$(cat TOMCAT_VERSION.txt)
             echo $(echo $CIRCLE_SHA1 | cut -c -7)-$CIRCLE_BUILD_NUM > BUILD_VERSION.txt
-            docker login -u $DOCKER_USER -p $DOCKER_PASS $DOCKER_REPO
-            docker build --no-cache  --build-arg TOMCAT_VERSION=$TOMCAT_VERSION -t $DOCKER_REPO/$DOCKER_REPO_ORG/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt) docker
-            docker push $DOCKER_REPO/$DOCKER_REPO_ORG/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt)
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker build --no-cache -t $DOCKER_USER/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt) docker
+            docker push $DOCKER_USER/$CIRCLE_PROJECT_REPONAME:$(cat BUILD_VERSION.txt)            
